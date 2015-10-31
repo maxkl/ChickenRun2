@@ -68,7 +68,7 @@ Game.prototype.load = function (callback) {
 };
 
 Game.prototype.getNextHayBaleTime = function () {
-	return this.now + (this.startSpeed / this.speed) * 3000;
+	return this.now + (this.startSpeed / this.speed) * (Math.random() * 2000 + 2000);
 };
 
 Game.prototype.start = function () {
