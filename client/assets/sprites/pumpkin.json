@@ -4,7 +4,7 @@
   "animations": {
     "default": {
       "row": 0,
-      "frames": 2
+      "frames": 8
     }
   }
 }

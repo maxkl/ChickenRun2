@@ -3,6 +3,10 @@
 
 HTML5 Jump 'n' Run game.
 
+## Try it online
+
+The game can be played at https://maxkl.de/chicken2
+
 ## Running the game
 
 1. (Install node.js)

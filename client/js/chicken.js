@@ -7,7 +7,7 @@ function Chicken(game) {
 	this.game = game;
 	this.sprite = Sprite.create(
 		this.game,
-		this.game.assets.get("assets/img/chicken-halloween.png"),
+		this.game.assets.get("assets/img/chicken-skeleton.png"),
 		this.game.assets.get("assets/sprites/chicken-halloween.json"),
 		this.game.scale,
 		this.game.frameTime

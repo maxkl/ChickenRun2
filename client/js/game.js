@@ -52,7 +52,7 @@ Game.prototype.load = function (callback) {
 	]);
 
 	this.assets.queue("img", [
-		"assets/img/chicken-halloween.png",
+		"assets/img/chicken-skeleton.png",
 		"assets/img/pumpkin.png",
 		"assets/img/background.png",
 		"assets/img/background2.png"
@@ -68,7 +68,7 @@ Game.prototype.load = function (callback) {
 };
 
 Game.prototype.getNextHayBaleTime = function () {
-	return this.now + this.speed * 10000;
+	return this.now + (this.startSpeed / this.speed) * 3000;
 };
 
 Game.prototype.start = function () {
