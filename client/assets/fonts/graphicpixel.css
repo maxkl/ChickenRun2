@@ -1,0 +1,8 @@
+
+/* https://css-tricks.com/snippets/css/using-font-face/ */
+@font-face {
+	font-family: "GraphicPixel";
+	src: url("graphicpixel-webfont.woff2") format("woff2"),
+		url("graphicpixel-webfont.woff") format("woff"),
+		url("graphicpixel-webfont.ttf") format("truetype");
+}

@@ -1,0 +1,14 @@
+{
+  "width": 19,
+  "height": 19,
+  "animations": {
+    "run": {
+      "row": 0,
+      "frames": 4
+    },
+    "jump": {
+      "row": 1,
+      "frames": 4
+    }
+  }
+}

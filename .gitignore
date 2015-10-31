@@ -1,0 +1,10 @@
+
+# node.js & npm
+node_modules/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Project specific
+client-build/

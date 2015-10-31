@@ -1,0 +1,63 @@
+
+@import url("../assets/fonts/graphicpixel.min.css");
+
+* {
+	box-sizing: border-box;
+
+	user-select: none;
+}
+
+html, body {
+	display: block;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+
+	font: 20px GraphicPixel, monospace;
+	color: #444;
+	background-color: #292929;
+}
+
+.container {
+	display: flex;
+	width: 100%;
+	height: 100%;
+}
+
+.canvases {
+	display: block;
+	position: relative;
+	margin: auto;
+	width: 700px;
+	height: 500px;
+}
+
+.canvases > canvas {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.fullscreen {
+	position: fixed;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 5px 10px;
+
+	border: none;
+	border-radius: 0;
+	background-color: black;
+	color: #ffffff;
+	opacity: .3;
+	cursor: pointer;
+
+	transition: opacity .3s ease;
+}
+
+.fullscreen:hover {
+	opacity: .5;
+}
