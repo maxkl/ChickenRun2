@@ -3,11 +3,8 @@
  * License: MIT
  */
 
-function Background(game, canvas, ctx) {
+function Background(game) {
 	this.game = game;
-
-	this.canvas = canvas;
-	this.ctx = ctx;
 
 	this.pos = 0;
 
@@ -22,22 +19,29 @@ function Background(game, canvas, ctx) {
 	this.tile2H = this.img2.height;
 	this.tile2WScaled = this.tile2W * this.game.scale;
 	this.tile2HScaled = this.tile2H * this.game.scale;
+
+	this.leastMultipleWidth = Util.lcm([
+		this.tile1WScaled * 4,
+		//this.tile2WScaled * 2,
+		this.tile2WScaled
+	]);
 }
 
 Background.prototype.draw = function () {
 	this.pos += this.game.frameDistance;
-	
-	if(this.pos > this.game.w) {
-		this.pos %= this.game.w;
+
+	if(this.pos > this.leastMultipleWidth) {
+		this.pos %= this.leastMultipleWidth;
 	}
 
-	var pos1 = (this.pos / 2) % this.tile1WScaled,
-		pos2 = (this.pos / 1) % this.tile2WScaled;
+	var pos1 = this.pos / 4,
+		//pos3 = this.pos / 2,
+		pos2 = this.pos / 1;
 
 	var x, y;
 	for(y = 0; y < this.game.h; y += this.tile1HScaled) {
 		for(x = -pos1; x < this.game.w; x += this.tile1WScaled) {
-			this.ctx.drawImage(
+			this.game.ctx.drawImage(
 				this.img1,
 				0, 0,
 				this.tile1W, this.tile1H,
@@ -47,9 +51,21 @@ Background.prototype.draw = function () {
 		}
 	}
 
+	//for(y = this.game.h - this.tile2HScaled; y < this.game.h; y += this.tile2HScaled) {
+	//	for(x = -pos3; x < this.game.w; x += this.tile2WScaled) {
+	//		this.game.ctx.drawImage(
+	//			this.img2,
+	//			0, 0,
+	//			this.tile2W, this.tile2H,
+	//			x, y,
+	//			this.tile2WScaled, this.tile2HScaled
+	//		);
+	//	}
+	//}
+
 	for(y = this.game.h - this.tile2HScaled; y < this.game.h; y += this.tile2HScaled) {
 		for(x = -pos2; x < this.game.w; x += this.tile2WScaled) {
-			this.ctx.drawImage(
+			this.game.ctx.drawImage(
 				this.img2,
 				0, 0,
 				this.tile2W, this.tile2H,

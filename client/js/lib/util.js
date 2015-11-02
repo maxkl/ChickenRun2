@@ -75,6 +75,37 @@ var Util = (function () {
 		}
 	};
 
+	exports.lcm = function (numbers) {
+		if(numbers.length >= 2) {
+			var result = exports.lcm2(numbers[0], numbers[1]);
+
+			for(var i = 2; i < numbers.length; i++) {
+				result = exports.lcm2(result, numbers[i]);
+			}
+
+			return result;
+		} else if(numbers.length == 1) {
+			return numbers[0];
+		} else {
+			return NaN;
+		}
+	};
+
+	exports.lcm2 = function (x, y) {
+		return (!x || !y) ? 0 : Math.abs((x * y) / exports.gcd2(x, y));
+	};
+
+	exports.gcd2 = function (x, y) {
+		x = Math.abs(x);
+		y = Math.abs(y);
+		while(y) {
+			var t = y;
+			y = x % y;
+			x = t;
+		}
+		return x;
+	};
+
 	return exports;
 
 })();

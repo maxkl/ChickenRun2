@@ -7,12 +7,10 @@
  * Game
  * @constructor
  */
-function Game(canvas, bgCanvas) {
+function Game(canvas) {
 	// From arguments
 	this.canvas = canvas;
 	this.ctx = this.canvas.getContext("2d");
-	this.bgCanvas = bgCanvas;
-	this.bgCtx = this.bgCanvas.getContext("2d");
 
 	// Constants
 	this.scale = 3;
@@ -32,6 +30,8 @@ function Game(canvas, bgCanvas) {
 	this.startTime = 0;
 	this.startSpeed = 350 / 1000; // 300 px/s
 	this.acceleration = 1.5 / (1000 * 1000); // 2 px/s^2
+
+	this.background = null;
 
 	// Entities
 	this.chicken = null;
@@ -82,7 +82,7 @@ Game.prototype.start = function () {
 			self.lastFrameTime = self.now;
 			self.speed = self.startSpeed;
 
-			self.background = new Background(self, self.bgCanvas, self.bgCtx);
+			self.background = new Background(self);
 
 			self.chicken = new Chicken(self);
 
@@ -120,7 +120,6 @@ Game.prototype.resize = function (w, h) {
 	this.hh = h / 2;
 
 	resizeCanvas(this.canvas, this.ctx, this.w, this.h);
-	resizeCanvas(this.bgCanvas, this.bgCtx, this.w, this.h);
 };
 
 Game.prototype.update = function () {
@@ -152,11 +151,9 @@ Game.prototype.render = function () {
 
 	this.update();
 
-	//this.ctx.fillStyle = "#fff";
-	//this.ctx.fillRect(0, 0, this.w, this.h);
-	this.ctx.clearRect(0, 0, this.w, this.h);
+	//this.ctx.clearRect(0, 0, this.w, this.h);
 
-	// On separate canvas
+	// This overwrites last frame
 	this.background.draw();
 
 	this.chicken.draw();
