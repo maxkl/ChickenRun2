@@ -20,7 +20,7 @@ function HayBale(game) {
 }
 
 HayBale.prototype.draw = function () {
-	this.x -= this.game.speed * this.game.deltaTime; // TODO: calculate distance to move in Game#update (needed for all moving objects)
+	this.x -= this.game.frameDistance;
 
 	this.sprite.render(this.x, this.y);
 };

@@ -15,6 +15,8 @@
 //	}
 //}
 
+// TODO!!
+
 function circleCollision(x1, y1, r1, x2, y2, r2) {
 	// X distance
 	var dx = x2 - x1;

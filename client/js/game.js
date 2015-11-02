@@ -23,6 +23,7 @@ function Game(canvas, bgCanvas) {
 	// *Managers
 	this.assets = new AssetManager();
 	this.input = new InputManager(this.canvas);
+	this.audio = new AudioManager();
 
 	// Timing
 	this.now = 0; // DOMAYBE: as prototype properties?
@@ -45,7 +46,7 @@ function Game(canvas, bgCanvas) {
 	this.boundRender = this.render.bind(this);
 }
 
-Game.prototype.load = function (callback) {
+Game.prototype.loadAssets = function (callback) {
 	this.assets.queue("json", [
 		"assets/sprites/chicken-halloween.json",
 		"assets/sprites/pumpkin.json"
@@ -58,13 +59,7 @@ Game.prototype.load = function (callback) {
 		"assets/img/background2.png"
 	]);
 
-	this.assets.loadQueue(function (err) {
-		if(err) {
-			callback(err);
-		} else {
-			callback(null);
-		}
-	})
+	this.assets.loadQueue(callback);
 };
 
 Game.prototype.getNextHayBaleTime = function () {
@@ -74,10 +69,12 @@ Game.prototype.getNextHayBaleTime = function () {
 Game.prototype.start = function () {
 	var self = this;
 
-	this.load(function (err) {
+	this.loadAssets(function (err) {
 		if(err) {
-			console.error("Game failed to load:", err);
+			console.error("Assets failed to load:", err);
 		} else {
+			self.audio.play();
+
 			self.now = Date.now();
 			self.startTime = self.now;
 			self.passedTime = 0;
@@ -148,6 +145,8 @@ Game.prototype.render = function () {
 
 	// v = a * t + v0
 	this.speed = this.acceleration * this.passedTime + this.startSpeed;
+	// s = v * t
+	this.frameDistance = this.speed * this.deltaTime;
 
 	this.input.tick();
 

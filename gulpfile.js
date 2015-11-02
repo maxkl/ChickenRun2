@@ -62,10 +62,16 @@ gulp.task("img", function () {
 		.pipe(gulp.dest(dstDir));
 });
 
+gulp.task("sounds", function () {
+	// TODO: more formats
+	return gulp.src(srcDir + "/**/*.{mp3,wav}")
+		.pipe(gulp.dest(dstDir));
+});
+
 gulp.task("build", function (callback) {
 	runSequence(
 		"clean",
-		["js", "css", "html", "fonts", "json", "img"],
+		["js", "css", "html", "fonts", "json", "img", "sounds"],
 		callback
 	);
 });

@@ -9,6 +9,8 @@ function Background(game, canvas, ctx) {
 	this.canvas = canvas;
 	this.ctx = ctx;
 
+	this.pos = 0;
+
 	this.img1 = this.game.assets.get("assets/img/background.png");
 	this.tile1W = this.img1.width;
 	this.tile1H = this.img1.height;
@@ -23,8 +25,14 @@ function Background(game, canvas, ctx) {
 }
 
 Background.prototype.draw = function () {
-	var pos1 = (this.game.passedTime / 20) % this.tile1WScaled,
-		pos2 = (this.game.passedTime / 5) % this.tile2WScaled;
+	this.pos += this.game.frameDistance;
+	
+	if(this.pos > this.game.w) {
+		this.pos %= this.game.w;
+	}
+
+	var pos1 = (this.pos / 2) % this.tile1WScaled,
+		pos2 = (this.pos / 1) % this.tile2WScaled;
 
 	var x, y;
 	for(y = 0; y < this.game.h; y += this.tile1HScaled) {
