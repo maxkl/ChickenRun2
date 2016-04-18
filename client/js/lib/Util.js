@@ -3,16 +3,16 @@
  * License: MIT
  */
 
-var Util = (function () {
+var Util = (function (window, document) {
 	"use strict";
 
-	var exports = {};
+	var Util = {};
 
 	/**
 	 * Run a function on page load
 	 * @param {function} callback
 	 */
-	exports.onReady = function (callback) {
+	Util.onReady = function (callback) {
 		// If the page has loaded the DOM, call immediately, else register for DOMContentLoaded
 		if(document.readyState == "interactive" || document.readyState == "complete" || document.readyState == "loaded") {
 			callback();
@@ -25,7 +25,7 @@ var Util = (function () {
 	 *
 	 * @param {Element} elem
 	 */
-	exports.requestFullscreen = function (elem) {
+	Util.requestFullscreen = function (elem) {
 		if (elem.requestFullscreen) {
 			elem.requestFullscreen();
 		} else if (elem.msRequestFullscreen) {
@@ -40,7 +40,7 @@ var Util = (function () {
 	/**
 	 *
 	 */
-	exports.exitFullscreen = function () {
+	Util.exitFullscreen = function () {
 		if (document.exitFullscreen) {
 			document.exitFullscreen();
 		} else if (document.msExitFullscreen) {
@@ -57,7 +57,7 @@ var Util = (function () {
 	 * @param {Element} [elem]
 	 * @return {boolean}
 	 */
-	exports.isFullscreen = function (elem) {
+	Util.isFullscreen = function (elem) {
 		var fullscreenElem = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
 
 		return elem ? (fullscreenElem === elem) : !!fullscreenElem;
@@ -67,20 +67,20 @@ var Util = (function () {
 	 *
 	 * @param {Element} elem
 	 */
-	exports.toggleFullscreen = function (elem) {
-		if(exports.isFullscreen()) {
-			exports.exitFullscreen();
+	Util.toggleFullscreen = function (elem) {
+		if(Util.isFullscreen()) {
+			Util.exitFullscreen();
 		} else {
-			exports.requestFullscreen(elem);
+			Util.requestFullscreen(elem);
 		}
 	};
 
-	exports.lcm = function (numbers) {
+	Util.lcm = function (numbers) {
 		if(numbers.length >= 2) {
-			var result = exports.lcm2(numbers[0], numbers[1]);
+			var result = Util.lcm2(numbers[0], numbers[1]);
 
 			for(var i = 2; i < numbers.length; i++) {
-				result = exports.lcm2(result, numbers[i]);
+				result = Util.lcm2(result, numbers[i]);
 			}
 
 			return result;
@@ -91,11 +91,11 @@ var Util = (function () {
 		}
 	};
 
-	exports.lcm2 = function (x, y) {
-		return (!x || !y) ? 0 : Math.abs((x * y) / exports.gcd2(x, y));
+	Util.lcm2 = function (x, y) {
+		return (!x || !y) ? 0 : Math.abs((x * y) / Util.gcd2(x, y));
 	};
 
-	exports.gcd2 = function (x, y) {
+	Util.gcd2 = function (x, y) {
 		x = Math.abs(x);
 		y = Math.abs(y);
 		while(y) {
@@ -106,6 +106,5 @@ var Util = (function () {
 		return x;
 	};
 
-	return exports;
-
-})();
+	return Util;
+})(window, document);

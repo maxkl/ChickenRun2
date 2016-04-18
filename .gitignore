@@ -8,3 +8,4 @@ node_modules/
 
 # Project specific
 client-build/
+client-build-dev/

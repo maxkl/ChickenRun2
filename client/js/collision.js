@@ -30,3 +30,13 @@ function circleCollision(x1, y1, r1, x2, y2, r2) {
 	// Pythagorean theorem
 	return (dx * dx + dy * dy) <= d * d;
 }
+
+function specialCollision(
+	chickenX, chickenY, chickenW, chickenH,
+	objectX, objectY,
+	objectCollider
+) {
+	function Object() {
+		return {};
+	}
+}

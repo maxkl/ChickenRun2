@@ -3,18 +3,14 @@
  * License: MIT
  */
 
-(function () {
-	"use strict";
 
-	function init() {
-		var canvas = document.getElementById("canvas"),
-			backgroundCanvas = document.getElementById("background");
+var game;
+function init() {
+	var canvas = document.getElementById("canvas");
 
-		var game = new Game(canvas, backgroundCanvas);
+	game = new Game(canvas);
 
-		game.start();
-	}
+	game.start();
+}
 
-	Util.onReady(init);
-
-})();
+Util.onReady(init);

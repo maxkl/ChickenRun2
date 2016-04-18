@@ -3,11 +3,7 @@
  * License: MIT
  */
 
-/**
- *
- */
-
-var InputManager = (function () {
+var InputManager = (function (window, document) {
 	"use strict";
 
 	function InputManager(target) {
@@ -54,4 +50,4 @@ var InputManager = (function () {
 	};
 
 	return InputManager;
-})();
+})(window, document);

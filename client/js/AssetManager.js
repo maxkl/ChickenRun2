@@ -3,7 +3,7 @@
  * License: MIT
  */
 
-var AssetManager = (function () {
+var AssetManager = (function (window, document) {
 	"use strict";
 
 	var loaders = {
@@ -128,4 +128,4 @@ var AssetManager = (function () {
 
 	return AssetManager;
 
-})();
+})(window, document);

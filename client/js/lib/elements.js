@@ -6,7 +6,7 @@
 /**
  * Get HTML elements
  */
-var $ = (function () {
+var $ = (function (window, document) {
 	"use strict";
 
 	var splice = Array.prototype.splice;
@@ -69,4 +69,4 @@ var $ = (function () {
 	};
 
 	return $;
-})();
+})(window, document);
