@@ -14,6 +14,8 @@ var InputManager = (function (window, document) {
 		this.mousePressed = false;
 		this.mouseReleased = false;
 
+		this.keyDown = {};
+
 		this.register();
 	}
 
@@ -31,15 +33,25 @@ var InputManager = (function (window, document) {
 
 			self.mouseDown = false;
 		}
+		
+		var target = this.target;
 
-		this.target.addEventListener("touchstart", onMouseDown);
-		this.target.addEventListener("mousedown", onMouseDown);
+		target.addEventListener("touchstart", onMouseDown);
+		target.addEventListener("mousedown", onMouseDown);
 
-		this.target.addEventListener("touchend", onMouseUp);
-		this.target.addEventListener("touchcancel", onMouseUp);
-		this.target.addEventListener("mouseup", onMouseUp);
-		this.target.addEventListener("mouseleave", onMouseUp);
-		this.target.addEventListener("mouseout", onMouseUp);
+		target.addEventListener("touchend", onMouseUp);
+		target.addEventListener("touchcancel", onMouseUp);
+		target.addEventListener("mouseup", onMouseUp);
+		target.addEventListener("mouseleave", onMouseUp);
+		target.addEventListener("mouseout", onMouseUp);
+
+		window.addEventListener("keydown", function (evt) {
+			self.keyDown[evt.which] = true;
+		});
+
+		window.addEventListener("keyup", function (evt) {
+			self.keyDown[evt.which] = false;
+		});
 	};
 
 	InputManager.prototype.tick = function () {

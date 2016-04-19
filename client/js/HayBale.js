@@ -6,24 +6,37 @@
 var HayBale = (function (window, document) {
 	"use strict";
 
+	registerResources("json", [
+		"assets/sprites/hay_bale.json"
+	]);
+	registerResources("img", [
+		"assets/img/hay_bale.png"
+	]);
+
 	function HayBale(game) {
 		this.game = game;
+		var scale = game.scale;
+		var json = this.game.assets.get("assets/sprites/hay_bale.json");
 		this.sprite = new Sprite(
-			this.game,
-			this.game.assets.get("assets/img/hay_bale.png"),
-			this.game.assets.get("assets/sprites/hay_bale.json"),
-			this.game.scale,
-			this.game.frameTime
+			game,
+			game.assets.get("assets/img/hay_bale.png"),
+			json,
+			scale,
+			game.frameTime
 		);
 
 		this.w = this.sprite.sw;
 		this.h = this.sprite.sh;
-		this.x = this.game.w;
-		this.y = this.game.h - this.h;
+		this.x = game.w;
+		this.y = game.h - this.h;
+
+		this.collider = new Collider(this.x + this.w / 2, this.y + this.h / 2, json.collider.radius * scale);
 	}
 
 	HayBale.prototype.draw = function () {
 		this.x -= this.game.frameDistance;
+
+		this.collider.updatePosition(this.x + this.w / 2, this.y + this.h / 2);
 
 		this.sprite.render(this.x, this.y);
 	};

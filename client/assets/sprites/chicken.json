@@ -13,6 +13,6 @@
   },
   "collider": {
     "type": "circle",
-    "radius": 9.5
+    "radius": 8.5
   }
 }

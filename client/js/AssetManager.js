@@ -127,5 +127,4 @@ var AssetManager = (function (window, document) {
 	};
 
 	return AssetManager;
-
 })(window, document);

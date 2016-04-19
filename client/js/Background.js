@@ -6,6 +6,11 @@
 var Background = (function (window, document) {
 	"use strict";
 
+	registerResources("img", [
+		"assets/img/background.png",
+		"assets/img/background2.png"
+	]);
+
 	function Background(game) {
 		this.game = game;
 

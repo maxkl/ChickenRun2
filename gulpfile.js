@@ -22,13 +22,15 @@ var paths = {
 	js: [
 		"lib/Util.js",
 		"lib/elements.js",
+		"registerResources.js",
 		"AssetManager.js",
 		"InputManager.js",
 		"AudioManager.js",
-		"collision.js",
+		"Collider.js",
 		"Sprite.js",
 		"Background.js",
 		"Chicken.js",
+		"DeadChicken.js",
 		"HayBale.js",
 		"Game.js",
 		"main.js"

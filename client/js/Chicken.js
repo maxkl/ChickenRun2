@@ -6,24 +6,34 @@
 var Chicken = (function (window, document) {
 	"use strict";
 
+	registerResources("json", [
+		"assets/sprites/chicken.json"
+	]);
+	registerResources("img", [
+		"assets/img/chicken.png"
+	]);
+
 	function Chicken(game) {
 		this.game = game;
+		var scale = game.scale;
+		var json = this.game.assets.get("assets/sprites/chicken.json");
 		this.sprite = new Sprite(
-			this.game,
-			this.game.assets.get("assets/img/chicken.png"),
-			this.game.assets.get("assets/sprites/chicken.json"),
-			this.game.scale,
-			this.game.frameTime
+			game,
+			game.assets.get("assets/img/chicken.png"),
+			json,
+			scale,
+			game.frameTime
 		);
-		// this.collider =
 
 		this.sprite.setAnimation("run");
 
 		this.w = this.sprite.sw;
 		this.h = this.sprite.sh;
-		this.x = this.game.hw - this.w / 2;
-		this.groundY = this.game.h - this.h;
+		this.x = game.hw - this.w / 2;
+		this.groundY = game.h - this.h;
 		this.y = this.groundY;
+		
+		this.collider = new Collider(this.x + this.w / 2, this.y + this.w / 2, json.collider.radius * scale);
 
 		this.jumping = false;
 		this.jumpSpeed = 0;
@@ -52,6 +62,8 @@ var Chicken = (function (window, document) {
 				this.sprite.setAnimation("run");
 			}
 		}
+
+		this.collider.updatePosition(this.x + this.w / 2, this.y + this.h / 2);
 
 		this.sprite.render(this.x, this.y);
 	};
