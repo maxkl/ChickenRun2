@@ -62,7 +62,7 @@ var Game = (function (window, document) {
 		// Entities
 		this.chicken = null;
 		this.hayBales = [];
-		this.deadChicken = null;
+		this.badMan = null;
 
 		// Initialization functions
 		this.registerListeners();
@@ -112,7 +112,7 @@ var Game = (function (window, document) {
 
 				self.background = new Background(self);
 				self.chicken = new Chicken(self);
-				self.deadChicken = new DeadChicken(self);
+				self.badMan = new BadMan(self);
 
 				self.nextHayBaleTime = self.getNextHayBaleTime();
 
@@ -186,33 +186,25 @@ var Game = (function (window, document) {
 				if(chickenCollider.checkCollision(hayBaleCollider)) {
 					this.currentRender = this.boundRenderDead;
 
-					this.deadChicken.x = this.chicken.x + this.chicken.w / 2 - this.deadChicken.w / 2;
-					this.deadChicken.y = this.chicken.y + this.chicken.h / 2 - this.deadChicken.h / 2;
-
 					this.frameDistance = 0;
-
-					// cancelAnimationFrame(this.animationFrameHandle);
-					// this.animationFrameHandle = null;
-					//
-					// var ctx = this.ctx;
-					// drawDebugCircle(ctx, chickenCollider.x, chickenCollider.y, chickenCollider.radius);
-					// drawDebugCircle(ctx, hayBaleCollider.x, hayBaleCollider.y, hayBaleCollider.radius);
 				}
 			}
 		}
+
+		this.badMan.draw();
 	};
 	
 	Game.prototype.renderDead = function () {
-		// This overwrites the last frame
-		this.background.draw();
-
-		var hayBales = this.hayBales;
-		var n = hayBales.length;
-		while(n--) {
-			hayBales[n].draw();
-		}
-
-		this.deadChicken.draw();
+		// // This overwrites the last frame
+		// this.background.draw();
+		//
+		// var hayBales = this.hayBales;
+		// var n = hayBales.length;
+		// while(n--) {
+		// 	hayBales[n].draw();
+		// }
+		//
+		// this.badMan.draw();
 	};
 
 	Game.prototype.render = function (timestamp) {

@@ -1,0 +1,10 @@
+{
+  "width": 14,
+  "height": 30,
+  "animations": {
+    "default": {
+      "row": 0,
+      "frames": 4
+    }
+  }
+}

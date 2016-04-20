@@ -7,49 +7,57 @@ var Background = (function (window, document) {
 	"use strict";
 
 	registerResources("img", [
-		"assets/img/background.png",
-		"assets/img/background2.png"
+		"assets/img/sky.png",
+		"assets/img/hills.png",
+		"assets/img/grass.png"
 	]);
 
+	/**
+	 *
+	 * @param {Game} game
+	 * @constructor
+	 */
 	function Background(game) {
 		this.game = game;
 
-		this.pos = 0;
+		var scale = game.scale;
 
-		this.img1 = this.game.assets.get("assets/img/background.png");
+		this.img1 = game.assets.get("assets/img/sky.png");
 		this.tile1W = this.img1.width;
 		this.tile1H = this.img1.height;
-		this.tile1WScaled = this.tile1W * this.game.scale;
-		this.tile1HScaled = this.tile1H * this.game.scale;
+		this.tile1WScaled = this.tile1W * scale;
+		this.tile1HScaled = this.tile1H * scale;
+		this.pos1 = 0;
 
-		this.img2 = this.game.assets.get("assets/img/background2.png");
+		this.img2 = game.assets.get("assets/img/hills.png");
 		this.tile2W = this.img2.width;
 		this.tile2H = this.img2.height;
-		this.tile2WScaled = this.tile2W * this.game.scale;
-		this.tile2HScaled = this.tile2H * this.game.scale;
+		this.tile2WScaled = this.tile2W * scale;
+		this.tile2HScaled = this.tile2H * scale;
+		this.pos2 = 0;
 
-		this.leastMultipleWidth = Util.lcm([
-			this.tile1WScaled * 4,
-			//this.tile2WScaled * 2,
-			this.tile2WScaled
-		]);
+		this.img3 = game.assets.get("assets/img/grass.png");
+		this.tile3W = this.img3.width;
+		this.tile3H = this.img3.height;
+		this.tile3WScaled = this.tile3W * scale;
+		this.tile3HScaled = this.tile3H * scale;
+		this.pos3 = 0;
 	}
 
 	Background.prototype.draw = function () {
-		this.pos += this.game.frameDistance;
+		var game = this.game;
+		var ctx = game.ctx;
 
-		if(this.pos > this.leastMultipleWidth) {
-			this.pos %= this.leastMultipleWidth;
-		}
-
-		var pos1 = this.pos / 4,
-		//pos3 = this.pos / 2,
-			pos2 = this.pos / 1;
+		var frameDistance = game.frameDistance;
 
 		var x, y;
-		for(y = 0; y < this.game.h; y += this.tile1HScaled) {
-			for(x = -pos1; x < this.game.w; x += this.tile1WScaled) {
-				this.game.ctx.drawImage(
+
+		// Sky
+		this.pos1 += frameDistance / 4;
+		if(this.pos1 > this.tile1WScaled) this.pos1 -= this.tile1WScaled;
+		for(y = 0; y < game.h; y += this.tile1HScaled) {
+			for(x = -this.pos1; x < game.w; x += this.tile1WScaled) {
+				ctx.drawImage(
 					this.img1,
 					0, 0,
 					this.tile1W, this.tile1H,
@@ -59,28 +67,32 @@ var Background = (function (window, document) {
 			}
 		}
 
-		//for(y = this.game.h - this.tile2HScaled; y < this.game.h; y += this.tile2HScaled) {
-		//	for(x = -pos3; x < this.game.w; x += this.tile2WScaled) {
-		//		this.game.ctx.drawImage(
-		//			this.img2,
-		//			0, 0,
-		//			this.tile2W, this.tile2H,
-		//			x, y,
-		//			this.tile2WScaled, this.tile2HScaled
-		//		);
-		//	}
-		//}
+		// Hills
+		this.pos2 += frameDistance / 2;
+		if(this.pos2 > this.tile2WScaled) this.pos2 -= this.tile2WScaled;
+		y = game.h - this.tile2HScaled;
+		for(x = -this.pos2; x < game.w; x += this.tile2WScaled) {
+			ctx.drawImage(
+				this.img2,
+				0, 0,
+				this.tile2W, this.tile2H,
+				x, y,
+				this.tile2WScaled, this.tile2HScaled
+			);
+		}
 
-		for(y = this.game.h - this.tile2HScaled; y < this.game.h; y += this.tile2HScaled) {
-			for(x = -pos2; x < this.game.w; x += this.tile2WScaled) {
-				this.game.ctx.drawImage(
-					this.img2,
-					0, 0,
-					this.tile2W, this.tile2H,
-					x, y,
-					this.tile2WScaled, this.tile2HScaled
-				);
-			}
+		// Grass
+		this.pos3 += frameDistance;
+		if(this.pos3 > this.tile3WScaled) this.pos3 -= this.tile3WScaled;
+		y = game.h - this.tile3HScaled;
+		for(x = -this.pos3; x < game.w; x += this.tile3WScaled) {
+			ctx.drawImage(
+				this.img3,
+				0, 0,
+				this.tile3W, this.tile3H,
+				x, y,
+				this.tile3WScaled, this.tile3HScaled
+			);
 		}
 	};
 

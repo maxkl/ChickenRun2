@@ -29,7 +29,7 @@ var Chicken = (function (window, document) {
 
 		this.w = this.sprite.sw;
 		this.h = this.sprite.sh;
-		this.x = game.hw - this.w / 2;
+		this.x = game.w / 3 - this.w / 2;
 		this.groundY = game.h - this.h;
 		this.y = this.groundY;
 		

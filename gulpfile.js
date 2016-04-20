@@ -30,7 +30,7 @@ var paths = {
 		"Sprite.js",
 		"Background.js",
 		"Chicken.js",
-		"DeadChicken.js",
+		"BadMan.js",
 		"HayBale.js",
 		"Game.js",
 		"main.js"
