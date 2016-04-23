@@ -6,10 +6,10 @@
 var BadMan = (function (window, document) {
 	"use strict";
 
-	registerResources("json", [
+	registerAssets("json", [
 		"assets/sprites/knife-hand.json"
 	]);
-	registerResources("img", [
+	registerAssets("img", [
 		"assets/img/knife-hand.png"
 	]);
 

@@ -6,10 +6,10 @@
 var HayBale = (function (window, document) {
 	"use strict";
 
-	registerResources("json", [
+	registerAssets("json", [
 		"assets/sprites/hay_bale.json"
 	]);
-	registerResources("img", [
+	registerAssets("img", [
 		"assets/img/hay_bale.png"
 	]);
 

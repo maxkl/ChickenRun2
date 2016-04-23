@@ -22,7 +22,6 @@ var paths = {
 	js: [
 		"lib/Util.js",
 		"lib/elements.js",
-		"registerResources.js",
 		"AssetManager.js",
 		"InputManager.js",
 		"AudioManager.js",

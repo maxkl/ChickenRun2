@@ -7,53 +7,126 @@ var AssetManager = (function (window, document) {
 	"use strict";
 
 	var loaders = {
-		"json": function (url, callback) {
-			var xhr = new XMLHttpRequest();
+		"json": function (game, url, updateProgress, done) {
+			var req = new XMLHttpRequest();
 
-			xhr.addEventListener("load", function () {
-				if(xhr.status == 200) {
+			req.addEventListener("load", function () {
+				if(req.status == 200) {
 					try {
-						var data = JSON.parse(xhr.responseText);
-						callback(null, data);
+						var data = JSON.parse(req.responseText);
+						done(null, data);
 					} catch(e) {
-						callback(e);
+						done(e);
 					}
 				} else {
-					callback(new Error("HTTP status code: " + xhr.status + "(" + xhr.statusText + ")"));
+					done(new Error("Server error: " + req.statusText + " (" + req.status + ")"));
 				}
 			});
 
-			xhr.addEventListener("error", function () {
-				callback(new Error("Connection error"));
+			req.addEventListener("progress", function (evt) {
+				if(evt.lengthComputable) {
+					updateProgress(evt.loaded / evt.total);
+				}
 			});
 
-			xhr.addEventListener("abort", function () {
-				callback(new Error("Request aborted"));
+			req.addEventListener("error", function () {
+				done(new Error("Client/network error"));
 			});
 
-			xhr.open("GET", url);
-			xhr.send();
+			req.addEventListener("abort", function () {
+				done(new Error("Request aborted"));
+			});
+
+			req.open("GET", url);
+			req.send();
 		},
-		"img": function (url, callback) {
-			var img = new Image();
+		"img": function (game, url, updateProgress, done) {
+			var req = new XMLHttpRequest();
 
-			img.onload = function () {
-				callback(null, img);
-			};
+			req.addEventListener("load", function () {
+				if(req.status == 200) {
+					var blob = new Blob([req.response]);
+					var img = new Image();
+					img.onload = function () {
+						done(null, img);
+					};
+					img.onerror = function () {
+						done(new Error("Image failed to load"));
+					};
+					img.src = window.URL.createObjectURL(blob);
+				} else {
+					done(new Error("Server error: " + req.statusText + " (" + req.status + ")"));
+				}
+			});
 
-			img.onerror = function () {
-				callback(new Error("Failed"));
-			};
+			req.addEventListener("progress", function (evt) {
+				if(evt.lengthComputable) {
+					updateProgress(evt.loaded / evt.total);
+				}
+			});
 
-			img.src = url;
+			req.addEventListener("error", function () {
+				done(new Error("Client/network error"));
+			});
+
+			req.addEventListener("abort", function () {
+				done(new Error("Request aborted"));
+			});
+
+			req.open("GET", url);
+			req.responseType = "arraybuffer";
+			req.send();
+		},
+		"audio": function (game, url, updateProgress, done) {
+			var req = new XMLHttpRequest();
+
+			req.addEventListener("load", function () {
+				if(req.status == 200) {
+					var audioContext = game.audio.context;
+
+					audioContext.decodeAudioData(req.response, function (buffer) {
+						done(null, buffer);
+					}, done);
+				} else {
+					done(new Error("Server error: " + req.statusText + " (" + req.status + ")"));
+				}
+			});
+
+			req.addEventListener("progress", function (evt) {
+				if(evt.lengthComputable) {
+					updateProgress(evt.loaded / evt.total);
+				}
+			});
+
+			req.addEventListener("error", function () {
+				done(new Error("Client/network error"));
+			});
+
+			req.addEventListener("abort", function () {
+				done(new Error("Request aborted"));
+			});
+
+			req.open("GET", url);
+			req.responseType = "arraybuffer";
+			req.send();
 		}
 	};
 
-	function loadAsset(type, url, callback) {
+	var registeredAssets = {};
+
+	window.registerAssets = function registerAssets(type, urls) {
+		if(!registeredAssets.hasOwnProperty(type)) {
+			registeredAssets[type] = [];
+		}
+
+		registeredAssets[type].push.apply(registeredAssets[type], urls);
+	};
+
+	function loadAsset(game, type, url, updateProgress, done) {
 		if(loaders[type]) {
-			loaders[type](url, callback);
+			loaders[type](game, url, updateProgress, done);
 		} else {
-			callback(new Error("Unrecognized asset type"));
+			done(new Error("Unrecognized asset type"));
 		}
 	}
 
@@ -62,57 +135,87 @@ var AssetManager = (function (window, document) {
 		this.data = data;
 	}
 
-	function AssetManager() {
+	function AssetManager(game) {
+		this.game = game;
+
 		this._queue = [];
 		this._assets = {};
+
+		var self = this;
+
+		game.hook("pre-load", function () {
+			for(var type in registeredAssets) {
+				if(registeredAssets.hasOwnProperty(type)) {
+					self.queue(type, registeredAssets[type]);
+				}
+			}
+
+			var queue = self._queue;
+			var queueLength = queue.length;
+
+			for(var i = 0; i < queueLength; i++) {
+				var item = queue.shift();
+
+				game.hook("load", function (item, updateProgress, done) {
+					var url = item.url;
+
+					loadAsset(game, item.type, url, updateProgress, function (err, data) {
+						self._assets[url] = new StoredAsset(!err, data);
+
+						done();
+					});
+				}.bind(null, item), true);
+			}
+		});
 	}
 
 	AssetManager.prototype.queue = function (type, urls) {
-		if(Array.isArray(urls)) {
-			var count = urls.length;
+		if(!Array.isArray(urls)) {
+			urls = [urls];
+		}
 
-			for(var i = 0; i < count; i++) {
+		var count = urls.length;
+
+		for(var i = 0; i < count; i++) {
+			var url = urls[i];
+
+			if(!this.has(url)) {
 				this._queue.push({
 					type: type,
 					url: urls[i]
 				});
 			}
-		} else {
-			this._queue.push({
-				type: type,
-				url: urls
-			});
 		}
 
 		return this;
 	};
 
-	AssetManager.prototype.loadQueue = function (callback) {
-		var count = this._queue.length,
-			loaded = 0;
-
-		if(count) {
-			for(var i = 0; i < count; i++) {
-				var item = this._queue.shift();
-
-				loadAsset(item.type, item.url, function (url, err, data) {
-					this._assets[url] = new StoredAsset(!err, data);
-
-					loaded++;
-
-					if(loaded >= count) {
-						if(callback) {
-							callback();
-						}
-					}
-				}.bind(this, item.url));
-			}
-		} else {
-			callback();
-		}
-
-		return this;
-	};
+	// AssetManager.prototype.loadQueue = function (callback) {
+	// 	var count = this._queue.length,
+	// 		loaded = 0;
+	//
+	// 	if(count) {
+	// 		for(var i = 0; i < count; i++) {
+	// 			var item = this._queue.shift();
+	//
+	// 			loadAsset(this.game, item.type, item.url, function (url, err, data) {
+	// 				this._assets[url] = new StoredAsset(!err, data);
+	//
+	// 				loaded++;
+	//
+	// 				if(loaded >= count) {
+	// 					if(callback) {
+	// 						callback();
+	// 					}
+	// 				}
+	// 			}.bind(this, item.url));
+	// 		}
+	// 	} else {
+	// 		callback();
+	// 	}
+	//
+	// 	return this;
+	// };
 
 	AssetManager.prototype.has = function (name) {
 		return !!this._assets[name];

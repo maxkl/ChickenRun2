@@ -6,7 +6,8 @@
 var InputManager = (function (window, document) {
 	"use strict";
 
-	function InputManager(target) {
+	function InputManager(game, target) {
+		this.game = game;
 		this.target = target;
 
 		this.mouseDown = false;

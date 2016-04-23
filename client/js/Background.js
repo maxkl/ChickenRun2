@@ -6,7 +6,7 @@
 var Background = (function (window, document) {
 	"use strict";
 
-	registerResources("img", [
+	registerAssets("img", [
 		"assets/img/sky.png",
 		"assets/img/hills.png",
 		"assets/img/grass.png"

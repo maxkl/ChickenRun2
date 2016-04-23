@@ -6,35 +6,42 @@
 var Chicken = (function (window, document) {
 	"use strict";
 
-	registerResources("json", [
+	registerAssets("json", [
 		"assets/sprites/chicken.json"
 	]);
-	registerResources("img", [
+	registerAssets("img", [
 		"assets/img/chicken.png"
 	]);
 
+	/**
+	 *
+	 * @param {Game} game
+	 * @constructor
+	 */
 	function Chicken(game) {
 		this.game = game;
+
 		var scale = game.scale;
-		var json = this.game.assets.get("assets/sprites/chicken.json");
-		this.sprite = new Sprite(
+
+		var json = game.assets.get("assets/sprites/chicken.json");
+
+		var sprite = this.sprite = new Sprite(
 			game,
 			game.assets.get("assets/img/chicken.png"),
 			json,
 			scale,
 			game.frameTime
 		);
+		sprite.setAnimation("run");
 
-		this.sprite.setAnimation("run");
+		var w = this.w = sprite.sw;
+		var h = this.h = sprite.sh;
+		var x = this.x = game.w / 3 - w / 2;
+		var groundY = this.groundY = game.h - h;
+		var y = this.y = groundY;
 
-		this.w = this.sprite.sw;
-		this.h = this.sprite.sh;
-		this.x = game.w / 3 - this.w / 2;
-		this.groundY = game.h - this.h;
-		this.y = this.groundY;
+		this.collider = new Collider(x + w / 2, y + h / 2, json.collider.radius * scale);
 		
-		this.collider = new Collider(this.x + this.w / 2, this.y + this.w / 2, json.collider.radius * scale);
-
 		this.jumping = false;
 		this.jumpSpeed = 0;
 	}

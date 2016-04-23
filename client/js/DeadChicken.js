@@ -6,7 +6,7 @@
 var DeadChicken = (function (window, document) {
 	"use strict";
 
-	registerResources("img", [
+	registerAssets("img", [
 		"assets/img/blood-stain.png"
 	]);
 
