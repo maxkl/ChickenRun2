@@ -32,6 +32,8 @@ var paths = {
 		"BadMan.js",
 		"HayBale.js",
 		"Game.js",
+		"StartScene.js",
+		"MainScene.js",
 		"main.js"
 	].map(function (s) {
 		return srcDir + "/js/" + s;

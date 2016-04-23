@@ -35,6 +35,14 @@ var Game = (function (window, document) {
 		ctx.stroke();
 	}
 
+	var registeredScenes = {};
+
+	window.registerScene = function registerScene(name, constructor) {
+		if(!registeredScenes.hasOwnProperty(name) && typeof constructor === "function") {
+			registeredScenes[name] = constructor;
+		}
+	};
+
 	/**
 	 * Game
 	 * @constructor
@@ -67,11 +75,14 @@ var Game = (function (window, document) {
 		this.speed = this.startSpeed;
 		// this.acceleration = 1.5 / 1000; // 2 px/s^2
 
+		this.scenes = {};
+		this.scene = null;
+		this.sceneName = null;
+
 		this.background = null;
 
 		// Entities
 		this.chicken = null;
-		this.hayBales = [];
 		this.badMan = null;
 
 		// Initialization functions
@@ -83,14 +94,6 @@ var Game = (function (window, document) {
 		this.boundRender = function (timestamp) {
 			self.render(timestamp);
 		};
-		this.boundRenderNormal = function () {
-			self.renderNormal();
-		};
-		this.boundRenderDead = function () {
-			self.renderDead();
-		};
-
-		this.currentRender = this.boundRenderNormal;
 	}
 
 	/**
@@ -157,20 +160,6 @@ var Game = (function (window, document) {
 		}
 	};
 
-	// Game.prototype.loadAssets = function (callback) {
-	// 	var assets = this.assets;
-	//
-	// 	var registeredResources = registerAssets.get();
-	//
-	// 	for(var type in registeredResources) {
-	// 		if(registeredResources.hasOwnProperty(type)) {
-	// 			assets.queue(type, registeredResources[type]);
-	// 		}
-	// 	}
-	//
-	// 	assets.loadQueue(callback);
-	// };
-
 	Game.prototype._load = function (onProgressUpdate, cb) {
 		console.info("Running hooks for 'load'");
 
@@ -224,8 +213,41 @@ var Game = (function (window, document) {
 		cb();
 	};
 
-	Game.prototype.getNextHayBaleTime = function () {
-		return this.now + (this.startSpeed / this.speed) * (Math.random() * 2000 + 2000);
+	Game.prototype.instantiateScenes = function () {
+		for(var sceneName in registeredScenes) {
+			if(registeredScenes.hasOwnProperty(sceneName)) {
+				var constructor = registeredScenes[sceneName];
+
+				this.scenes[sceneName] = new constructor(this);
+
+				console.log("Instantiated scene '" + sceneName + "'");
+			}
+		}
+	};
+	
+	Game.prototype.loadScene = function (sceneName) {
+		if(!this.scenes.hasOwnProperty(sceneName)) {
+			console.error("Tried to load unregistered scene '" + sceneName + "'");
+			return;
+		}
+
+		if(sceneName === this.sceneName) {
+			console.warn("Scene '" + sceneName + "' already loaded");
+			return;
+		}
+
+		if(this.scene && this.scene.unload) {
+			this.scene.unload();
+		}
+
+		this.scene = this.scenes[sceneName];
+		this.sceneName = sceneName;
+
+		console.log("Loading scene '" + sceneName + "'");
+
+		if(this.scene.load) {
+			this.scene.load();
+		}
 	};
 
 	Game.prototype._startGame = function () {
@@ -233,7 +255,8 @@ var Game = (function (window, document) {
 		this.chicken = new Chicken(this);
 		this.badMan = new BadMan(this);
 
-		this.nextHayBaleTime = this.getNextHayBaleTime();
+		this.instantiateScenes();
+		this.loadScene("start");
 
 		requestAnimationFrame(this.boundRender);
 	};
@@ -282,75 +305,6 @@ var Game = (function (window, document) {
 		resizeCanvas(this.canvas, this.ctx, this.w, this.h);
 	};
 
-	Game.prototype.update = function () {
-		if(this.now >= this.nextHayBaleTime) {
-			this.nextHayBaleTime = this.getNextHayBaleTime();
-
-			// TODO: prevent gc
-			this.hayBales.push(new HayBale(this));
-		}
-
-		if(
-			(this.input.mousePressed || this.input.keyDown[32])
-			&& !this.chicken.jumping
-		) {
-			this.chicken.jump();
-			this.audio.playSoundEffect("jump");
-		}
-	};
-
-	Game.prototype.renderNormal = function () {
-		// v = a * t + v0
-		//this.speed = this.acceleration * this.passedTime + this.startSpeed;
-		// s = v * t
-		this.frameDistance = this.speed * this.deltaTime;
-
-		this.update();
-
-		// This overwrites the last frame
-		this.background.draw();
-
-		var chicken = this.chicken;
-		chicken.draw();
-
-		var hayBales = this.hayBales;
-		var n = hayBales.length;
-		while(n--) {
-			var hayBale = hayBales[n];
-
-			// Remove hay bale if out of screen
-			if(hayBale.x + hayBale.w < 0) {
-				// TODO: prevent gc
-				hayBales.splice(n, 1);
-			} else {
-				hayBale.draw();
-
-				var chickenCollider = chicken.collider;
-				var hayBaleCollider = hayBale.collider;
-				if(chickenCollider.checkCollision(hayBaleCollider)) {
-					this.currentRender = this.boundRenderDead;
-
-					this.frameDistance = 0;
-				}
-			}
-		}
-
-		this.badMan.draw();
-	};
-	
-	Game.prototype.renderDead = function () {
-		// // This overwrites the last frame
-		// this.background.draw();
-		//
-		// var hayBales = this.hayBales;
-		// var n = hayBales.length;
-		// while(n--) {
-		// 	hayBales[n].draw();
-		// }
-		//
-		// this.badMan.draw();
-	};
-
 	Game.prototype.render = function (timestamp) {
 		this.animationFrameHandle = requestAnimationFrame(this.boundRender);
 
@@ -364,7 +318,7 @@ var Game = (function (window, document) {
 
 		this.input.tick();
 
-		this.currentRender();
+		this.scene.render();
 	};
 
 	return Game;
