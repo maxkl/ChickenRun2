@@ -8,6 +8,10 @@ var Game = (function (window, document) {
 
 	var TWO_PI = Math.PI * 2;
 
+	var REF_WIDTH = 272,
+		REF_HEIGHT = 170;
+	var REF_GRAVITY = (-2 * 1000) / 3;
+
 	registerAssets("audio", [
 		"assets/sounds/effects/jump.mp3"
 	]);
@@ -57,9 +61,9 @@ var Game = (function (window, document) {
 		this.animationFrameHandle = null;
 
 		// Constants
-		this.scale = 3;
+		this.scale = 1;
 		this.frameTime = 100;
-		this.gravity = -2 * 1000;
+		this.gravity = REF_GRAVITY;
 
 		// *Managers
 		this.assets = new AssetManager(this);
@@ -71,24 +75,15 @@ var Game = (function (window, document) {
 		this.timeShift = 0;
 		this.lastTimestamp = 0;
 		this.deltaTime = 0;
-		this.startSpeed = 350; // 300 px/s
-		this.speed = this.startSpeed;
-		// this.acceleration = 1.5 / 1000; // 2 px/s^2
 
 		this.scenes = {};
 		this.scene = null;
 		this.sceneName = null;
 
-		this.background = null;
-
-		// Entities
-		this.chicken = null;
-		this.badMan = null;
-
 		// Initialization functions
 		this.registerListeners();
 
-		this.resize(700, 500);
+		this.resize(REF_WIDTH, REF_HEIGHT);
 
 		var self = this;
 		this.boundRender = function (timestamp) {
@@ -103,7 +98,7 @@ var Game = (function (window, document) {
 	 * @param {...*} [args]
 	 * @private
 	 */
-	Game.prototype._callHooks = function (name, cb, args) {
+	Game.prototype.callHooks = function (name, cb, args) {
 		console.info("Running hooks for '" + name + "'");
 
 		if(this._hooks.hasOwnProperty(name)) {
@@ -160,7 +155,7 @@ var Game = (function (window, document) {
 		}
 	};
 
-	Game.prototype._load = function (onProgressUpdate, cb) {
+	Game.prototype.load = function (onProgressUpdate, cb) {
 		console.info("Running hooks for 'load'");
 
 		if(this._hooks.hasOwnProperty("load")) {
@@ -250,11 +245,7 @@ var Game = (function (window, document) {
 		}
 	};
 
-	Game.prototype._startGame = function () {
-		this.background = new Background(this);
-		this.chicken = new Chicken(this);
-		this.badMan = new BadMan(this);
-
+	Game.prototype.startGame = function () {
 		this.instantiateScenes();
 		this.loadScene("start");
 
@@ -264,13 +255,13 @@ var Game = (function (window, document) {
 	Game.prototype.start = function () {
 		var self = this;
 
-		this._callHooks("pre-load", function () {
+		this.callHooks("pre-load", function () {
 			var $loadingOverlay = document.getElementById("loading-overlay");
 			var $loadingPercentage = document.getElementById("loading-percentage");
 
 			$loadingPercentage.innerHTML = 0;
 
-			self._load(function(progress) {
+			self.load(function(progress) {
 				$loadingPercentage.innerHTML = Math.round(progress * 100);
 			}, function (err) {
 				if(err) {
@@ -278,10 +269,10 @@ var Game = (function (window, document) {
 					return;
 				}
 
-				self._callHooks("post-load", function () {
+				self.callHooks("post-load", function () {
 					$loadingOverlay.classList.add("hidden");
 
-					self._startGame();
+					self.startGame();
 				});
 			});
 		});
@@ -295,14 +286,31 @@ var Game = (function (window, document) {
 		});
 	};
 
-	Game.prototype.resize = function (w, h) {
-		this.w = w;//window.innerWidth;
-		this.h = h;//window.innerHeight;
+	Game.prototype.resize = function () {
+		var viewportWidth = window.innerWidth,
+			viewportHeight = window.innerHeight;
 
-		this.hw = w / 2;
-		this.hh = h / 2;
+		var scale;
+		if(viewportWidth < REF_WIDTH * 2 || viewportHeight < REF_HEIGHT * 2) {
+			scale = 1;
+		} else if(viewportWidth < REF_WIDTH * 3 || viewportHeight < REF_HEIGHT * 3) {
+			scale = 2;
+		} else {
+			scale = 3;
+		}
 
-		resizeCanvas(this.canvas, this.ctx, this.w, this.h);
+		var w = REF_WIDTH * scale,
+			h = REF_HEIGHT * scale;
+
+		this.w = w;
+		this.h = h;
+		this.scale = scale;
+
+		resizeCanvas(this.canvas, this.ctx, w, h);
+
+		if(this.scene && this.scene.resize) {
+			this.scene.resize(w, h, scale);
+		}
 	};
 
 	Game.prototype.render = function (timestamp) {

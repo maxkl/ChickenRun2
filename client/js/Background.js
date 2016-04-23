@@ -44,11 +44,11 @@ var Background = (function (window, document) {
 		this.pos3 = 0;
 	}
 
-	Background.prototype.draw = function () {
+	Background.prototype.draw = function (frameDistance) {
 		var game = this.game;
 		var ctx = game.ctx;
 
-		var frameDistance = game.frameDistance;
+		// var frameDistance = game.frameDistance;
 
 		var x, y;
 

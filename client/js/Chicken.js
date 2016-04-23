@@ -41,7 +41,7 @@ var Chicken = (function (window, document) {
 		var y = this.y = groundY;
 
 		this.collider = new Collider(x + w / 2, y + h / 2, json.collider.radius * scale);
-		
+
 		this.jumping = false;
 		this.jumpSpeed = 0;
 	}
@@ -50,16 +50,20 @@ var Chicken = (function (window, document) {
 		if(!this.jumping) {
 			this.jumping = true;
 
-			this.jumpSpeed = 700;
+			this.jumpSpeed = 240 * this.game.scale;
 
 			this.sprite.setAnimation("jump");
 		}
 	};
 
 	Chicken.prototype.draw = function () {
+		var game = this.game;
+
+		var scale = game.scale;
+
 		if(this.jumping) {
-			this.jumpSpeed += this.game.gravity * this.game.deltaTime;
-			this.y -= this.jumpSpeed * this.game.deltaTime;
+			this.jumpSpeed += game.gravity * game.deltaTime * scale;
+			this.y -= this.jumpSpeed * game.deltaTime;
 
 			if(this.y > this.groundY) {
 				this.y = this.groundY;

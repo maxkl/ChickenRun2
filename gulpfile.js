@@ -29,7 +29,7 @@ var paths = {
 		"Sprite.js",
 		"Background.js",
 		"Chicken.js",
-		"BadMan.js",
+		// "BadMan.js",
 		"HayBale.js",
 		"Game.js",
 		"StartScene.js",

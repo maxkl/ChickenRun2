@@ -1,17 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
-		<meta charset="utf-8" />
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<title>Chicken Run 2</title>
-		<meta name="viewport" content="width=device-width,initial-scale=1" />
-		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css">
 	</head>
 	<body>
 		<div class="container">
-			<div class="canvases">
+			<div class="game-wrapper">
 				<canvas id="canvas"></canvas>
+				<div class="start-overlay" id="start-overlay">
+					<div class="centered">
+						<div class="start-title">Chicken Run<br />2</div>
+						<button class="start-button" id="start-button">Start Game</button>
+					</div>
+				</div>
 				<div class="loading-overlay" id="loading-overlay">
-					<div class="loading-overlay-center">
+					<div class="centered">
 						<div class="chicken-loader"></div>
 						<div class="loading-percentage"><span id="loading-percentage"></span>%</div>
 					</div>
