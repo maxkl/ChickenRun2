@@ -8,8 +8,12 @@ var MainScene = (function (window, document) {
 
 	registerScene("main", MainScene);
 
-	// TODO: fade scenes
-	// TODO: sound on/off
+	registerAssets("audio", [
+		"assets/sounds/effects/short-chicken-gack.mp3",
+		"assets/sounds/effects/badum-tss.mp3"
+	]);
+
+	// TODO: credits & github link on start screen
 
 	/**
 	 * 
@@ -105,12 +109,13 @@ var MainScene = (function (window, document) {
 			&& !this.chicken.jumping
 		) {
 			this.chicken.jump();
-			game.audio.playSoundEffect("jump");
 		}
 	};
 
 	MainScene.prototype.gameOver = function () {
 		this.running = false;
+
+		game.audio.playSoundEffect("badum-tss");
 
 		this.$score.classList.remove("visible");
 		this.$highscore.classList.remove("visible");
@@ -122,6 +127,8 @@ var MainScene = (function (window, document) {
 
 	MainScene.prototype.incrementScore = function () {
 		var game = this.game;
+
+		game.audio.playSoundEffect("short-chicken-gack");
 
 		this.score++;
 		this.$score.innerHTML = this.score;

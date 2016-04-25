@@ -28,7 +28,11 @@ var AudioManager = (function (window, document) {
 	function AudioManager(game) {
 		this.game = game;
 
+		this.muted = game.storage.get("muted", false);
+
 		this.context = createAudioContext();
+		this.output = this.context.createGain();
+		this.output.connect(this.context.destination);
 		this.musicEnabled = false;
 		this.musicNode = null;
 
@@ -39,14 +43,32 @@ var AudioManager = (function (window, document) {
 		});
 	}
 
+	AudioManager.prototype.setMuted = function (muted) {
+		muted = !!muted;
+		this.muted = muted;
+		this.game.storage.set("muted", muted);
+
+		if(muted) {
+			this.output.gain.value = 0;
+
+			this.disableMusic();
+		} else {
+			this.output.gain.value = 1;
+
+			this.enableMusic();
+		}
+	};
+
 	AudioManager.prototype.enableMusic = function () {
+		if(this.muted) return;
+
 		if(this.musicNode) {
 			this.musicNode.stop(0);
 		}
 
 		this.musicNode = this.context.createBufferSource();
 		this.musicNode.buffer = this.game.assets.get("assets/sounds/Pixelland.mp3");
-		this.musicNode.connect(this.context.destination);
+		this.musicNode.connect(this.output);
 		this.musicNode.loop = true;
 		this.musicNode.start(0);
 
@@ -63,13 +85,15 @@ var AudioManager = (function (window, document) {
 	};
 
 	AudioManager.prototype.playSoundEffect = function (name) {
+		if(this.muted) return;
+
 		var url = "assets/sounds/effects/" + name + ".mp3";
 
 		var buffer = this.game.assets.get(url);
 		if(buffer) {
 			var node = this.context.createBufferSource();
 			node.buffer = buffer;
-			node.connect(this.context.destination);
+			node.connect(this.output);
 			node.start(0);
 		} else {
 			console.warn("Sound effect '" + name + "' not loaded");

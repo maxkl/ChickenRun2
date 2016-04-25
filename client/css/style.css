@@ -197,6 +197,14 @@ body {
 	visibility: visible;
 }
 
+.mute {
+	top: 5px;
+	left: 50%;
+	padding: 3px 5px;
+
+	transform: translate(-50%, 0);
+}
+
 @keyframes chicken-loader {
 	from {  background-position: 0 0;  }
 	to {  background-position: -304px 0;  }
@@ -241,6 +249,11 @@ body {
 	.gameover-buttons {
 		margin-top: 30px;
 	}
+
+    .mute {
+	    padding: 2px 4px;
+	    font-size: .8em;
+    }
 }
 
 /* Scale: 1 */
@@ -250,7 +263,7 @@ body {
 	}
 
 	.button {
-		padding: 5px 10px;
+		padding: 4px 8px;
 		font-size: .8em;
 	}
 
@@ -274,6 +287,11 @@ body {
 	}
 
 	.gameover-buttons {
-		margin-top: 20px;
+		margin-top: 10px;
+	}
+
+	.mute {
+		padding: 1px 3px;
+		font-size: .6em;
 	}
 }

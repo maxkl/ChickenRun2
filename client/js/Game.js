@@ -10,10 +10,6 @@ var Game = (function (window, document) {
 		REF_HEIGHT = 170;
 	var REF_GRAVITY = (-2 * 1000) / 3;
 
-	registerAssets("audio", [
-		"assets/sounds/effects/jump.mp3"
-	]);
-
 	function clamp(n, min, max) {
 		return n < min ? min : n > max ? max : n;
 	}
@@ -45,6 +41,7 @@ var Game = (function (window, document) {
 		this._hooks = {};
 
 		this.$fader = document.getElementById("fader");
+		this.$mute = document.getElementById("mute");
 		this.canvas = canvas;
 		this.ctx = this.canvas.getContext("2d");
 
@@ -300,6 +297,17 @@ var Game = (function (window, document) {
 		window.addEventListener("resize", function () {
 			clearTimeout(resizeTimeout);
 			resizeTimeout = setTimeout(delayedResize, 100);
+		});
+
+		this.$mute.innerHTML = this.audio.muted ? "Sounds on" : "Sounds off";
+		this.$mute.addEventListener("click", function () {
+			if(self.audio.muted) {
+				self.audio.setMuted(false);
+				self.$mute.innerHTML = "Sounds off";
+			} else {
+				self.audio.setMuted(true);
+				self.$mute.innerHTML = "Sounds on";
+			}
 		});
 	};
 
