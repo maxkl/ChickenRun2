@@ -83,7 +83,7 @@ var Game = (function (window, document) {
 		// Initialization functions
 		this.registerListeners();
 
-		this.resize(REF_WIDTH, REF_HEIGHT);
+		this.resize();
 
 		var self = this;
 		this.boundRender = function (timestamp) {
@@ -226,11 +226,6 @@ var Game = (function (window, document) {
 			return;
 		}
 
-		// if(sceneName === this.sceneName) {
-		// 	console.warn("Scene '" + sceneName + "' already loaded");
-		// 	return;
-		// }
-
 		if(this.scene && this.scene.unload) {
 			this.scene.unload();
 		}
@@ -288,6 +283,17 @@ var Game = (function (window, document) {
 		window.addEventListener("contextmenu", function (evt) {
 			evt.preventDefault();
 		});
+
+		function delayedResize() {
+			self.resize();
+			self.loadScene("start");
+		}
+
+		var resizeTimeout;
+		window.addEventListener("resize", function () {
+			clearTimeout(resizeTimeout);
+			resizeTimeout = setTimeout(delayedResize, 100);
+		});
 	};
 
 	Game.prototype.resize = function () {
@@ -311,10 +317,6 @@ var Game = (function (window, document) {
 		this.scale = scale;
 
 		resizeCanvas(this.canvas, this.ctx, w, h);
-
-		if(this.scene && this.scene.resize) {
-			this.scene.resize(w, h, scale);
-		}
 	};
 
 	Game.prototype.render = function (timestamp) {
