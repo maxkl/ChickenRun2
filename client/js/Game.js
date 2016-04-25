@@ -6,8 +6,6 @@
 var Game = (function (window, document) {
 	"use strict";
 
-	var TWO_PI = Math.PI * 2;
-
 	var REF_WIDTH = 272,
 		REF_HEIGHT = 170;
 	var REF_GRAVITY = (-2 * 1000) / 3;
@@ -31,14 +29,6 @@ var Game = (function (window, document) {
 		ctx.imageSmoothingEnabled = false;
 	}
 
-	function drawDebugCircle(ctx, x, y, r) {
-		ctx.beginPath();
-		ctx.arc(x, y, r, 0, TWO_PI);
-		ctx.strokeStyle = "red";
-		ctx.lineWidth = 1;
-		ctx.stroke();
-	}
-
 	var registeredScenes = {};
 
 	window.registerScene = function registerScene(name, constructor) {
@@ -54,7 +44,7 @@ var Game = (function (window, document) {
 	function Game(canvas) {
 		this._hooks = {};
 
-		// From arguments
+		this.$fader = document.getElementById("fader");
 		this.canvas = canvas;
 		this.ctx = this.canvas.getContext("2d");
 
@@ -232,13 +222,27 @@ var Game = (function (window, document) {
 
 		this.scene = null;
 
-		var scene =  this.scenes[sceneName];
+		var scene = this.scenes[sceneName];
 		this.sceneName = sceneName;
 
 		console.log("Loading scene '" + sceneName + "'");
 
 		if(scene.load) {
-			scene.load();
+			if(scene.load.length > 0) {
+				var self = this;
+
+				this.$fader.classList.add("visible");
+
+				scene.load(function () {
+					self.$fader.classList.remove("visible");
+
+					self.scene = scene;
+				});
+
+				return;
+			} else {
+				scene.load();
+			}
 		}
 
 		this.scene = scene;

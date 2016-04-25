@@ -181,6 +181,22 @@ body {
 	margin: 10px;
 }
 
+.scene-fade-overlay {
+	width: 100%;
+	height: 100%;
+
+	background-color: #fff;
+	opacity: 0;
+	visibility: hidden;
+
+	transition: opacity .3s ease, visibility .3s ease;
+}
+
+.scene-fade-overlay.visible {
+	opacity: 1;
+	visibility: visible;
+}
+
 @keyframes chicken-loader {
 	from {  background-position: 0 0;  }
 	to {  background-position: -304px 0;  }
