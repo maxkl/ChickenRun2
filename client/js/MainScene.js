@@ -9,6 +9,7 @@ var MainScene = (function (window, document) {
 	registerScene("main", MainScene);
 
 	// TODO: fade scenes
+	// TODO: sound on/off
 
 	/**
 	 * 

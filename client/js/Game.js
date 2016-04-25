@@ -60,8 +60,9 @@ var Game = (function (window, document) {
 
 		this.animationFrameHandle = null;
 
-		// Constants
-		this.scale = 1;
+		this.scale = 0;
+		this.w = 0;
+		this.h = 0;
 		this.frameTime = 100;
 		this.gravity = REF_GRAVITY;
 
@@ -72,7 +73,6 @@ var Game = (function (window, document) {
 
 		// Timing
 		this.now = 0;
-		this.timeShift = 0;
 		this.lastTimestamp = 0;
 		this.deltaTime = 0;
 
@@ -285,8 +285,11 @@ var Game = (function (window, document) {
 		});
 
 		function delayedResize() {
-			self.resize();
-			self.loadScene("start");
+			var resized = self.resize();
+
+			if(resized) {
+				self.loadScene("start");
+			}
 		}
 
 		var resizeTimeout;
@@ -309,20 +312,24 @@ var Game = (function (window, document) {
 			scale = 3;
 		}
 
-		var w = REF_WIDTH * scale,
-			h = REF_HEIGHT * scale;
+		if(scale !== this.scale) {
+			var w = REF_WIDTH * scale,
+				h = REF_HEIGHT * scale;
 
-		this.w = w;
-		this.h = h;
-		this.scale = scale;
+			this.w = w;
+			this.h = h;
+			this.scale = scale;
 
-		resizeCanvas(this.canvas, this.ctx, w, h);
+			resizeCanvas(this.canvas, this.ctx, w, h);
+
+			return true;
+		}
+
+		return false;
 	};
 
 	Game.prototype.render = function (timestamp) {
 		this.animationFrameHandle = requestAnimationFrame(this.boundRender);
-
-		timestamp -= this.timeShift;
 
 		this.now = timestamp;
 		if(this.lastTimestamp) {
