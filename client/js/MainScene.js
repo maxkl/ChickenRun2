@@ -8,12 +8,20 @@ var MainScene = (function (window, document) {
 
 	registerScene("main", MainScene);
 
+	// TODO: fade scenes
+	// TODO: dynamic resize
+	// TODO: persistent highscore
+
 	function MainScene(game) {
 		this.game = game;
+
+		this.$gameoverOverlay = document.getElementById("gameover-overlay");
+		this.$gameoverScore = document.getElementById("gameover-score");
+
+		this.running = true;
 		
 		this.startSpeed = 120;
 		this.speed = 0;
-		// this.acceleration = 1.5 / 1000; // 2 px/s^2
 
 		this.hayBales = null;
 		this.nextHayBaleTime = 0;
@@ -22,8 +30,26 @@ var MainScene = (function (window, document) {
 
 		// Entities
 		this.chicken = null;
-		// this.badMan = null;
+
+		this.$score = document.getElementById("score");
+		this.score = 0;
+
+		this.registerListeners();
 	}
+
+	MainScene.prototype.registerListeners = function () {
+		var game = this.game;
+
+		var $back = document.getElementById("gameover-back");
+		$back.addEventListener("click", function () {
+			game.loadScene("start");
+		});
+
+		var $retry = document.getElementById("gameover-retry");
+		$retry.addEventListener("click", function () {
+			game.loadScene("main");
+		});
+	};
 
 	MainScene.prototype.getNextHayBaleTime = function () {
 		return this.game.now + (this.startSpeed / this.speed) * (Math.random() * 2000 + 2000);
@@ -32,16 +58,25 @@ var MainScene = (function (window, document) {
 	MainScene.prototype.load = function () {
 		var game = this.game;
 
+		this.running = true;
+
 		this.speed = this.startSpeed;
 
 		this.background = new Background(game);
 
 		this.chicken = new Chicken(game);
-		// this.badMan = new BadMan(game);
 
 		this.hayBales = [];
-
 		this.nextHayBaleTime = this.getNextHayBaleTime();
+
+		this.$score.innerHTML = "0";
+		this.$score.classList.add("visible");
+		this.score = 0;
+	};
+
+	MainScene.prototype.unload = function () {
+		this.$score.classList.remove("visible");
+		this.$gameoverOverlay.classList.remove("visible");
 	};
 
 	MainScene.prototype.update = function () {
@@ -62,48 +97,61 @@ var MainScene = (function (window, document) {
 			game.audio.playSoundEffect("jump");
 		}
 	};
+
+	MainScene.prototype.gameOver = function () {
+		this.running = false;
+
+		this.$gameoverOverlay.classList.add("visible");
+		this.$gameoverScore.innerHTML = this.score;
+	};
+
+	MainScene.prototype.incrementScore = function () {
+		this.score++;
+		this.$score.innerHTML = this.score;
+	};
 	
 	MainScene.prototype.render = function () {
-		console.log("render");
+		if(this.running) {
+			var game = this.game;
 
-		var game = this.game;
+			var scale = game.scale;
 
-		var scale = game.scale;
-		
-		// v = a * t + v0
-		//this.speed += this.acceleration * game.deltaTime;
-		// s = v * t
-		var frameDistance = this.speed * game.deltaTime * scale;
+			var frameDistance = this.speed * game.deltaTime * scale;
 
-		this.update();
+			this.update();
 
-		// background overwrites the last frame
-		this.background.draw(frameDistance);
+			// background overwrites the last frame
+			this.background.draw(frameDistance);
 
-		var chicken = this.chicken;
-		chicken.draw();
+			var chicken = this.chicken;
+			chicken.draw();
 
-		var hayBales = this.hayBales;
-		var n = hayBales.length;
-		while(n--) {
-			var hayBale = hayBales[n];
+			var hayBales = this.hayBales;
+			var n = hayBales.length;
+			while(n--) {
+				var hayBale = hayBales[n];
 
-			if(hayBale.x + hayBale.w < 0) {
-				// TODO: prevent gc
-				hayBales.splice(n, 1);
-			} else {
-				hayBale.draw(frameDistance);
+				if(hayBale.x + hayBale.w < 0) {
+					// TODO: prevent gc
+					hayBales.splice(n, 1);
+				} else {
+					hayBale.draw(frameDistance);
 
-				var chickenCollider = chicken.collider;
-				var hayBaleCollider = hayBale.collider;
-				if(chickenCollider.checkCollision(hayBaleCollider)) {
-					game.loadScene("start");
-					console.log("dead");
+					if(!hayBale.passed) {
+						if(hayBale.x + hayBale.w < chicken.x) {
+							hayBale.passed = true;
+							this.incrementScore();
+						}
+
+						var chickenCollider = chicken.collider;
+						var hayBaleCollider = hayBale.collider;
+						if(chickenCollider.checkCollision(hayBaleCollider)) {
+							this.gameOver();
+						}
+					}
 				}
 			}
 		}
-
-		// this.badMan.draw();
 	};
 
 	return MainScene;

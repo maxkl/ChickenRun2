@@ -28,9 +28,6 @@ var AudioManager = (function (window, document) {
 	function AudioManager(game) {
 		this.game = game;
 
-		// this.player = new Audio("assets/sounds/soundtrack1.mp3");
-		// this.player.loop = true;
-
 		this.context = createAudioContext();
 		this.musicEnabled = false;
 		this.musicNode = null;

@@ -10,10 +10,21 @@
 		<div class="container">
 			<div class="game-wrapper">
 				<canvas id="canvas"></canvas>
+				<div class="score" id="score"></div>
+				<div class="gameover-overlay" id="gameover-overlay">
+					<div class="centered">
+						<div class="gameover-title">Game Over!</div>
+						<div class="gameover-score">Score: <span id="gameover-score"></span></div>
+						<div class="gameover-buttons">
+							<button class="button" id="gameover-back">Back</button>
+							<button class="button" id="gameover-retry">Retry</button>
+						</div>
+					</div>
+				</div>
 				<div class="start-overlay" id="start-overlay">
 					<div class="centered">
 						<div class="start-title">Chicken Run<br />2</div>
-						<button class="start-button" id="start-button">Start Game</button>
+						<button class="button start-button" id="start-button">Start Game</button>
 					</div>
 				</div>
 				<div class="loading-overlay" id="loading-overlay">

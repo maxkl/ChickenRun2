@@ -226,23 +226,27 @@ var Game = (function (window, document) {
 			return;
 		}
 
-		if(sceneName === this.sceneName) {
-			console.warn("Scene '" + sceneName + "' already loaded");
-			return;
-		}
+		// if(sceneName === this.sceneName) {
+		// 	console.warn("Scene '" + sceneName + "' already loaded");
+		// 	return;
+		// }
 
 		if(this.scene && this.scene.unload) {
 			this.scene.unload();
 		}
 
-		this.scene = this.scenes[sceneName];
+		this.scene = null;
+
+		var scene =  this.scenes[sceneName];
 		this.sceneName = sceneName;
 
 		console.log("Loading scene '" + sceneName + "'");
 
-		if(this.scene.load) {
-			this.scene.load();
+		if(scene.load) {
+			scene.load();
 		}
+
+		this.scene = scene;
 	};
 
 	Game.prototype.startGame = function () {
@@ -326,7 +330,9 @@ var Game = (function (window, document) {
 
 		this.input.tick();
 
-		this.scene.render();
+		if(this.scene) {
+			this.scene.render();
+		}
 	};
 
 	return Game;

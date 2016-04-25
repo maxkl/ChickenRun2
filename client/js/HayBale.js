@@ -31,6 +31,8 @@ var HayBale = (function (window, document) {
 		this.y = game.h - this.h;
 
 		this.collider = new Collider(this.x + this.w / 2, this.y + this.h / 2, json.collider.radius * scale);
+
+		this.passed = false;
 	}
 
 	HayBale.prototype.draw = function (frameDistance) {
