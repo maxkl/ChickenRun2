@@ -65,7 +65,7 @@ var Game = (function (window, document) {
 		this.frameTime = 100;
 		this.gravity = REF_GRAVITY;
 
-		// *Managers
+		this.storage = new PersistentStorage("chicken2_");
 		this.assets = new AssetManager(this);
 		this.input = new InputManager(this, this.canvas);
 		this.audio = new AudioManager(this);

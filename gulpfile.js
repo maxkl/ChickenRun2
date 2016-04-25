@@ -22,6 +22,7 @@ var paths = {
 	js: [
 		"lib/Util.js",
 		"lib/elements.js",
+		"PersistentStorage.js",
 		"AssetManager.js",
 		"InputManager.js",
 		"AudioManager.js",

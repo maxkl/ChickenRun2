@@ -12,11 +12,17 @@ var MainScene = (function (window, document) {
 	// TODO: dynamic resize
 	// TODO: persistent highscore
 
+	/**
+	 * 
+	 * @param {Game} game
+	 * @constructor
+	 */
 	function MainScene(game) {
 		this.game = game;
 
 		this.$gameoverOverlay = document.getElementById("gameover-overlay");
 		this.$gameoverScore = document.getElementById("gameover-score");
+		this.$gameoverHighscore = document.getElementById("gameover-highscore");
 
 		this.running = true;
 		
@@ -32,7 +38,9 @@ var MainScene = (function (window, document) {
 		this.chicken = null;
 
 		this.$score = document.getElementById("score");
+		this.$highscore = document.getElementById("highscore");
 		this.score = 0;
+		this.highscore = 0;
 
 		this.registerListeners();
 	}
@@ -69,13 +77,17 @@ var MainScene = (function (window, document) {
 		this.hayBales = [];
 		this.nextHayBaleTime = this.getNextHayBaleTime();
 
-		this.$score.innerHTML = "0";
-		this.$score.classList.add("visible");
 		this.score = 0;
+		this.$score.innerHTML = this.score;
+		this.$score.classList.add("visible");
+		this.highscore = game.storage.get("highscore", 0);
+		this.$highscore.innerHTML = this.highscore;
+		this.$highscore.classList.add("visible");
 	};
 
 	MainScene.prototype.unload = function () {
 		this.$score.classList.remove("visible");
+		this.$highscore.classList.remove("visible");
 		this.$gameoverOverlay.classList.remove("visible");
 	};
 
@@ -101,13 +113,25 @@ var MainScene = (function (window, document) {
 	MainScene.prototype.gameOver = function () {
 		this.running = false;
 
+		this.$score.classList.remove("visible");
+		this.$highscore.classList.remove("visible");
+
 		this.$gameoverOverlay.classList.add("visible");
 		this.$gameoverScore.innerHTML = this.score;
+		this.$gameoverHighscore.innerHTML = this.highscore;
 	};
 
 	MainScene.prototype.incrementScore = function () {
+		var game = this.game;
+
 		this.score++;
 		this.$score.innerHTML = this.score;
+		
+		if(this.score > this.highscore) {
+			this.highscore = this.score;
+			game.storage.set("highscore", this.highscore);
+			this.$highscore.innerHTML = this.highscore;
+		}
 	};
 	
 	MainScene.prototype.render = function () {

@@ -7,7 +7,8 @@
 	user-select: none;
 }
 
-html, body {
+html,
+body {
 	display: block;
 	margin: 0;
 	padding: 0;
@@ -118,18 +119,29 @@ html, body {
 	text-align: center;
 }
 
-.score {
+.score,
+.highscore {
 	display: none;
 	position: absolute;
 	top: 0;
-	right: 0;
-	left: auto;
+	margin: 5px 10px;
 
 	font-size: 3em;
 }
 
-.score.visible {
+.score.visible,
+.highscore.visible {
 	display: block;
+}
+
+.score {
+	right: 0;
+	left: auto;
+}
+
+.highscore {
+	left: 0;
+	right: auto;
 }
 
 .gameover-overlay {
@@ -195,7 +207,8 @@ html, body {
 		margin-top: 50px;
 	}
 
-    .score {
+    .score,
+    .highscore {
 	    font-size: 2em;
     }
 
@@ -229,7 +242,8 @@ html, body {
 		margin-top: 30px;
 	}
 
-    .score {
+    .score,
+    .highscore {
 	    font-size: 1em;
     }
 

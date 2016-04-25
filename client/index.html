@@ -11,13 +11,17 @@
 			<div class="game-wrapper">
 				<canvas id="canvas"></canvas>
 				<div class="score" id="score"></div>
+				<div class="highscore" id="highscore"></div>
 				<div class="gameover-overlay" id="gameover-overlay">
 					<div class="centered">
 						<div class="gameover-title">Game Over!</div>
-						<div class="gameover-score">Score: <span id="gameover-score"></span></div>
+						<div class="gameover-score">
+							Score: <span id="gameover-score"></span><br />
+							Best: <span id="gameover-highscore"></span>
+						</div>
 						<div class="gameover-buttons">
-							<button class="button" id="gameover-back">Back</button>
-							<button class="button" id="gameover-retry">Retry</button>
+							<button class="button" id="gameover-back">Back</button><!--
+						 --><button class="button" id="gameover-retry">Retry</button>
 						</div>
 					</div>
 				</div>
