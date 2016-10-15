@@ -42,6 +42,7 @@ var Game = (function (window, document) {
 
 		this.$fader = document.getElementById("fader");
 		this.$mute = document.getElementById("mute");
+		this.$fullscreen = document.getElementById("fullscreen");
 		this.canvas = canvas;
 		this.ctx = this.canvas.getContext("2d");
 
@@ -308,6 +309,10 @@ var Game = (function (window, document) {
 				self.audio.setMuted(true);
 				self.$mute.innerHTML = "Sounds on";
 			}
+		});
+
+		this.$fullscreen.addEventListener("click", function () {
+			Util.toggleFullscreen(document.documentElement);
 		});
 	};
 

@@ -205,6 +205,17 @@ body {
 	transform: translate(-50%, 0);
 }
 
+.fullscreen {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 2px 5px;
+
+	font-size: .6em;
+	background-color: #666;
+	opacity: .6;
+}
+
 @keyframes chicken-loader {
 	from {  background-position: 0 0;  }
 	to {  background-position: -304px 0;  }
